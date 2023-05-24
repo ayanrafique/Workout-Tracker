@@ -29,4 +29,3 @@ Just follow these easy steps:
 - **Charts for Rep PRs**
     - Monitor your progress over time with charts that visually represent your personal records.
 
-Feel free to contribute to these features or suggest new ones! Let's keep improving our fitness journey together.
