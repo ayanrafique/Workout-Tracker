@@ -1,6 +1,6 @@
 # Barebone Fitness Tracker
 
-This fitness tracker is a straightforward tool designed to help you keep track of your workouts.
+This fitness tracker is a barebones tool designed to help you keep track of your workouts.
 
 ## 💪 How to Use
 
