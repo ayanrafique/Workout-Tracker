@@ -21,6 +21,7 @@
             <option>Row</option>
             <option>Weighted pullup</option>
             <option>Weighted dips</option>
+            <option>Good mornings</option>
         </select>
 
         <label for="reps">Reps (0-20):</label>
@@ -29,12 +30,14 @@
         <label for="sets">Sets (0-20):</label>
         <input type="number" id="sets" min="0" max="20">
 
-
         <label for="weight">Weight (0-1000):</label>
         <input type="number" id="weight" min="0" max="1000">
 
         <label for="modifier">Modifier Note:</label>
         <textarea id="modifier"></textarea>
+
+        <label for="rpe">RPE (1-10):</label>
+        <input type="number" id="rpe" min="1" max="10">
 
         <input type="button" id="addWorkout" value="Add Workout">
     </form>

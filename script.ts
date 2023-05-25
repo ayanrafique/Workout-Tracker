@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const weightInput = document.getElementById('weight') as HTMLInputElement;
     const modifierInput = document.getElementById('modifier') as HTMLInputElement;
     const setsInput = document.getElementById('sets') as HTMLInputElement;
+    const rpeInput = document.getElementById('rpe') as HTMLInputElement;
     const addWorkoutButton = document.getElementById('addWorkout') as HTMLButtonElement;
     const workoutList = document.getElementById('workoutList') as HTMLUListElement;
 
@@ -14,7 +15,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         
         const createWorkoutListItem = (workout, index) => {
             const listItem = document.createElement('li');
-            listItem.textContent = `Exercise: ${workout.exercise}, Reps: ${workout.reps}, Weight: ${workout.weight}, Modifier: ${workout.modifier}, Sets: ${workout.sets}, Date: ${workout.date}`;
+            listItem.textContent = `Exercise: ${workout.exercise}, Reps: ${workout.reps}, Weight: ${workout.weight}, Modifier: ${workout.modifier}, Sets: ${workout.sets}, RPE: ${workout.rpe}, Date: ${workout.date}`;
 
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
@@ -33,6 +34,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 weightInput.value = String(workout.weight);
                 modifierInput.value = workout.modifier;
                 setsInput.value = String(workout.sets);
+                rpeInput.value = String(workout.rpe);
                 editIndex = index;
                 addWorkoutButton.value = 'Update Workout';
             });
@@ -53,9 +55,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const weight = Number(weightInput.value);
         const modifier = modifierInput.value;
         const sets = Number(setsInput.value);
+        const rpe = Number(rpeInput.value);
         const date = new Date().toLocaleDateString();
 
-        const workout = { exercise, reps, weight, modifier, sets, date };
+        const workout = { exercise, reps, weight, modifier, sets, rpe, date };
         const workouts = JSON.parse(localStorage.getItem('workouts') || '[]');
 
         if (editIndex !== null) {
@@ -72,6 +75,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         weightInput.value = '';
         modifierInput.value = '';
         setsInput.value = '';
+        rpeInput.value = '';
 
         workoutList.innerHTML = '';
         loadWorkouts();

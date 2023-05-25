@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var weightInput = document.getElementById('weight');
     var modifierInput = document.getElementById('modifier');
     var setsInput = document.getElementById('sets');
+    var rpeInput = document.getElementById('rpe');
     var addWorkoutButton = document.getElementById('addWorkout');
     var workoutList = document.getElementById('workoutList');
     var editIndex = null;
@@ -11,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var workouts = JSON.parse(localStorage.getItem('workouts') || '[]');
         var createWorkoutListItem = function (workout, index) {
             var listItem = document.createElement('li');
-            listItem.textContent = "Exercise: ".concat(workout.exercise, ", Reps: ").concat(workout.reps, ", Weight: ").concat(workout.weight, ", Modifier: ").concat(workout.modifier, ", Sets: ").concat(workout.sets, ", Date: ").concat(workout.date);
+            listItem.textContent = "Exercise: ".concat(workout.exercise, ", Reps: ").concat(workout.reps, ", Weight: ").concat(workout.weight, ", Modifier: ").concat(workout.modifier, ", Sets: ").concat(workout.sets, ", RPE: ").concat(workout.rpe, ", Date: ").concat(workout.date);
             var deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
             deleteButton.addEventListener('click', function () {
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 weightInput.value = String(workout.weight);
                 modifierInput.value = workout.modifier;
                 setsInput.value = String(workout.sets);
+                rpeInput.value = String(workout.rpe);
                 editIndex = index;
                 addWorkoutButton.value = 'Update Workout';
             });
@@ -45,8 +47,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var weight = Number(weightInput.value);
         var modifier = modifierInput.value;
         var sets = Number(setsInput.value);
+        var rpe = Number(rpeInput.value);
         var date = new Date().toLocaleDateString();
-        var workout = { exercise: exercise, reps: reps, weight: weight, modifier: modifier, sets: sets, date: date };
+        var workout = { exercise: exercise, reps: reps, weight: weight, modifier: modifier, sets: sets, rpe: rpe, date: date };
         var workouts = JSON.parse(localStorage.getItem('workouts') || '[]');
         if (editIndex !== null) {
             workouts[editIndex] = workout;
@@ -61,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         weightInput.value = '';
         modifierInput.value = '';
         setsInput.value = '';
+        rpeInput.value = '';
         workoutList.innerHTML = '';
         loadWorkouts();
     });
