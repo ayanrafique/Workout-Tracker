@@ -1,5 +1,6 @@
 
-!(app.gif)
+![App Usage](app.gif)
+
 
 # Barebone Fitness Tracker
 
