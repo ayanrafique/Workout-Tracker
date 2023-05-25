@@ -1,3 +1,6 @@
+
+!(app.gif)
+
 # Barebone Fitness Tracker
 
 This fitness tracker is a barebones tool designed to help you keep track of your workouts.
