@@ -3,6 +3,7 @@
 <head>
     <title>Workout Tracker</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <h1>Workout Tracker</h1>
@@ -11,33 +12,45 @@
     </div>
 
     <form id="workoutForm">
-        <label for="exercise">Select exercise:</label>
-        <select id="exercise">
-            <option>Overhead press</option>
-            <option>Bench press</option>
-            <option>HB squat</option>
-            <option>LB squat</option>
-            <option>Deadlift</option>
-            <option>Row</option>
-            <option>Weighted pullup</option>
-            <option>Weighted dips</option>
-            <option>Good mornings</option>
-        </select>
+        <div class="form-group">
+            <label for="exercise">Select exercise:</label>
+            <select id="exercise">
+                <option>Overhead press</option>
+                <option>Bench press</option>
+                <option>HB squat</option>
+                <option>LB squat</option>
+                <option>Deadlift</option>
+                <option>Row</option>
+                <option>Weighted pullup</option>
+                <option>Weighted dips</option>
+                <option>Good mornings</option>
+            </select>
+        </div>
 
-        <label for="reps">Reps (0-20):</label>
-        <input type="number" id="reps" min="0" max="20">
+        <div class="form-group">
+            <label for="reps">Reps (0-20):</label>
+            <input type="number" id="reps" min="0" max="20">
+        </div>
 
-        <label for="sets">Sets (0-20):</label>
-        <input type="number" id="sets" min="0" max="20">
+        <div class="form-group">
+            <label for="sets">Sets (0-20):</label>
+            <input type="number" id="sets" min="0" max="20">
+        </div>
 
-        <label for="weight">Weight (0-1000):</label>
-        <input type="number" id="weight" min="0" max="1000">
+        <div class="form-group">
+            <label for="weight">Weight (0-1000):</label>
+            <input type="number" id="weight" min="0" max="1000">
+        </div>
 
-        <label for="modifier">Modifier Note:</label>
-        <textarea id="modifier"></textarea>
+        <div class="form-group">
+            <label for="modifier">Modifier Note:</label>
+            <textarea id="modifier"></textarea>
+        </div>
 
-        <label for="rpe">RPE (1-10):</label>
-        <input type="number" id="rpe" min="1" max="10">
+        <div class="form-group">
+            <label for="rpe">RPE (1-10):</label>
+            <input type="number" id="rpe" min="1" max="10">
+        </div>
 
         <input type="button" id="addWorkout" value="Add Workout">
     </form>
@@ -45,7 +58,23 @@
     <h2>Workout List</h2>
     <ul id="workoutList">
     </ul>
-    
+
+    <h2>Chart</h2>
+    <label for="chartExercise">Select exercise:</label>
+    <select id="chartExercise">
+        <option>Overhead press</option>
+        <option>Bench press</option>
+        <option>HB squat</option>
+        <option>LB squat</option>
+        <option>Deadlift</option>
+        <option>Row</option>
+        <option>Weighted pullup</option>
+        <option>Weighted dips</option>
+        <option>Good mornings</option>
+    </select>
+    <input type="button" id="generateChart" value="Generate Chart">
+    <canvas id="myChart"></canvas>
+
     <script src="script.js"></script>
 </body>
 </html>

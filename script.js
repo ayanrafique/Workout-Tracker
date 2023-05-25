@@ -3,13 +3,17 @@ document.addEventListener('DOMContentLoaded', initialize);
 function initialize(event) {
     const formFields = getFormFields();
     const workoutList = document.getElementById('workoutList');
+    const chartExerciseSelect = document.getElementById('chartExercise');
+    const generateChartButton = document.getElementById('generateChart');
     let editIndex = null;
+    let chart = null;
     const ADD_WORKOUT_LABEL = 'Add Workout';
     const UPDATE_WORKOUT_LABEL = 'Update Workout';
 
     loadWorkouts();
 
     formFields.addWorkoutButton.addEventListener('click', handleAddOrUpdateWorkout);
+    generateChartButton.addEventListener('click', generateChart);
 
     function getFormFields() {
         return {
@@ -20,7 +24,7 @@ function initialize(event) {
             setsInput: document.getElementById('sets'),
             rpeInput: document.getElementById('rpe'),
             addWorkoutButton: document.getElementById('addWorkout'),
-        }
+        };
     }
 
     function loadWorkouts() {
@@ -87,7 +91,7 @@ function initialize(event) {
     function handleAddOrUpdateWorkout() {
         const workout = getWorkoutFromForm();
         const workouts = getWorkoutsFromLocalStorage();
-        
+
         if (editIndex !== null) {
             updateWorkout(workout, workouts);
         }
@@ -130,5 +134,49 @@ function initialize(event) {
         formFields.modifierInput.value = '';
         formFields.setsInput.value = '';
         formFields.rpeInput.value = '';
+    }
+
+    function generateChart() {
+        if (chart !== null) {
+            chart.destroy();
+        }
+
+        const selectedExercise = chartExerciseSelect.value;
+        const workouts = getWorkoutsFromLocalStorage().filter(workout => workout.exercise === selectedExercise);
+        const dates = workouts.map(workout => workout.date);
+        const weights = workouts.map(workout => workout.weight);
+        const reps = workouts.map(workout => workout.reps);
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [
+                    {
+                        label: 'Weight',
+                        data: weights,
+                        borderColor: 'rgb(75, 192, 192)',
+                        yAxisID: 'y',
+                    },
+                    {
+                        label: 'Reps',
+                        data: reps,
+                        borderColor: 'rgb(255, 99, 132)',
+                        yAxisID: 'y1',
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                    y1: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
     }
 }
