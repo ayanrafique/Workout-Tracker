@@ -25,5 +25,5 @@ This fitness tracker is a barebones tool designed to help you keep track of your
 
 - Calendar Integration
 
-- Charts for Rep PRs
+- Tonnage/Volume calculate and track in charts
 
