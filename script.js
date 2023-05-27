@@ -1,154 +1,195 @@
 document.addEventListener('DOMContentLoaded', initialize);
 
-function initialize(event) {
-    const formFields = getFormFields();
-    const workoutList = document.getElementById('workoutList');
-    const chartExerciseSelect = document.getElementById('chartExercise');
-    const generateChartButton = document.getElementById('generateChart');
-    let editIndex = null;
-    let chart = null;
-    const ADD_WORKOUT_LABEL = 'Add Workout';
-    const UPDATE_WORKOUT_LABEL = 'Update Workout';
+function initialize() {
+    const uiElements = {
+        formFields: getFormFields(),
+        workoutList: document.getElementById('workoutList'),
+        chartExerciseSelect: document.getElementById('chartExercise'),
+        generateChartButton: document.getElementById('generateChart'),
+        personalRecordsDiv: document.getElementById('personalRecords'),
+        myChart: document.getElementById('myChart'),
+    };
+    
+    const state = {
+        editIndex: null,
+        chart: null,
+    };
 
-    loadWorkouts();
+    const labels = {
+        ADD_WORKOUT: 'Add Workout',
+        UPDATE_WORKOUT: 'Update Workout',
+    };
 
-    formFields.addWorkoutButton.addEventListener('click', handleAddOrUpdateWorkout);
-    generateChartButton.addEventListener('click', generateChart);
+    const workoutHandler = new WorkoutHandler(uiElements, state, labels);
+    workoutHandler.initialize();
+}
 
-    function getFormFields() {
-        return {
-            exerciseSelect: document.getElementById('exercise'),
-            repsInput: document.getElementById('reps'),
-            weightInput: document.getElementById('weight'),
-            modifierInput: document.getElementById('modifier'),
-            setsInput: document.getElementById('sets'),
-            rpeInput: document.getElementById('rpe'),
-            addWorkoutButton: document.getElementById('addWorkout'),
-        };
+function getFormFields() {
+    return {
+        exerciseSelect: document.getElementById('exercise'),
+        repsInput: document.getElementById('reps'),
+        weightInput: document.getElementById('weight'),
+        modifierInput: document.getElementById('modifier'),
+        setsInput: document.getElementById('sets'),
+        rpeInput: document.getElementById('rpe'),
+        addWorkoutButton: document.getElementById('addWorkout'),
+    };
+}
+
+class WorkoutHandler {
+    constructor(uiElements, state, labels) {
+        this.uiElements = uiElements;
+        this.state = state;
+        this.labels = labels;
     }
 
-    function loadWorkouts() {
-        const workouts = getWorkoutsFromLocalStorage();
+    initialize() {
+        this.loadWorkouts();
+        this.updatePersonalRecordsAll();
+        this.uiElements.formFields.addWorkoutButton.addEventListener('click', () => this.handleAddOrUpdateWorkout());
+        this.uiElements.generateChartButton.addEventListener('click', () => this.generateChart());
+    }
+
+    loadWorkouts() {
+        const workouts = this.getWorkoutsFromLocalStorage();
         workouts.forEach((workout, index) => {
-            const listItem = createWorkoutListItem(workout, index);
-            workoutList.appendChild(listItem);
+            const listItem = this.createWorkoutListItem(workout, index);
+            this.uiElements.workoutList.appendChild(listItem);
         });
     }
 
-    function getWorkoutsFromLocalStorage() {
+    getWorkoutsFromLocalStorage() {
         return JSON.parse(localStorage.getItem('workouts') || '[]');
     }
 
-    function createWorkoutListItem(workout, index) {
+    createWorkoutListItem(workout, index) {
         const listItem = document.createElement('li');
-        listItem.textContent = getWorkoutText(workout);
+        listItem.textContent = this.getWorkoutText(workout);
 
-        const deleteButton = createDeleteButton(index, listItem);
+        const deleteButton = this.createDeleteButton(index, listItem);
         listItem.appendChild(deleteButton);
 
-        const editButton = createEditButton(workout, index);
+        const editButton = this.createEditButton(workout, index);
         listItem.appendChild(editButton);
 
         return listItem;
     }
 
-    function getWorkoutText(workout) {
+    getWorkoutText(workout) {
         return `Exercise: ${workout.exercise}, Reps: ${workout.reps}, Weight: ${workout.weight}, Modifier: ${workout.modifier}, Sets: ${workout.sets}, RPE: ${workout.rpe}, Date: ${workout.date}`;
     }
 
-    function createDeleteButton(index, listItem) {
+    createDeleteButton(index, listItem) {
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', () => deleteWorkout(index, listItem));
+        deleteButton.addEventListener('click', () => this.deleteWorkout(index, listItem));
         return deleteButton;
     }
 
-    function deleteWorkout(index, listItem) {
-        const workouts = getWorkoutsFromLocalStorage();
+    deleteWorkout(index, listItem) {
+        const workouts = this.getWorkoutsFromLocalStorage();
         workouts.splice(index, 1);
         localStorage.setItem('workouts', JSON.stringify(workouts));
-        workoutList.removeChild(listItem);
+        this.uiElements.workoutList.removeChild(listItem);
     }
 
-    function createEditButton(workout, index) {
+    createEditButton(workout, index) {
         const editButton = document.createElement('button');
         editButton.textContent = 'Edit';
-        editButton.addEventListener('click', () => editWorkout(workout, index));
+        editButton.addEventListener('click', () => this.editWorkout(workout, index));
         return editButton;
     }
 
-    function editWorkout(workout, index) {
-        formFields.exerciseSelect.value = workout.exercise;
-        formFields.repsInput.value = String(workout.reps);
-        formFields.weightInput.value = String(workout.weight);
-        formFields.modifierInput.value = workout.modifier;
-        formFields.setsInput.value = String(workout.sets);
-        formFields.rpeInput.value = String(workout.rpe);
-        editIndex = index;
-        formFields.addWorkoutButton.value = UPDATE_WORKOUT_LABEL;
+    editWorkout(workout, index) {
+        this.uiElements.formFields.exerciseSelect.value = workout.exercise;
+        this.uiElements.formFields.repsInput.value = String(workout.reps);
+        this.uiElements.formFields.weightInput.value = String(workout.weight);
+        this.uiElements.formFields.modifierInput.value = workout.modifier;
+        this.uiElements.formFields.setsInput.value = String(workout.sets);
+        this.uiElements.formFields.rpeInput.value = String(workout.rpe);
+        this.state.editIndex = index;
+        this.uiElements.formFields.addWorkoutButton.value = this.labels.UPDATE_WORKOUT;
     }
 
-    function handleAddOrUpdateWorkout() {
-        const workout = getWorkoutFromForm();
-        const workouts = getWorkoutsFromLocalStorage();
+    handleAddOrUpdateWorkout() {
+        const workout = this.getWorkoutFromForm();
+        const workouts = this.getWorkoutsFromLocalStorage();
 
-        if (editIndex !== null) {
-            updateWorkout(workout, workouts);
-        }
-        else {
-            addWorkout(workout, workouts);
+        if (this.state.editIndex !== null) {
+            this.updateWorkout(workout, workouts);
+        } else {
+            this.addWorkout(workout, workouts);
         }
 
-        resetFormFields();
-        workoutList.innerHTML = '';
-        loadWorkouts();
+        this.updatePersonalRecords(workout);
+        this.uiElements.formFields.addWorkoutButton.value = this.labels.ADD_WORKOUT;
     }
 
-    function getWorkoutFromForm() {
+    getWorkoutFromForm() {
         return {
-            exercise: formFields.exerciseSelect.value,
-            reps: Number(formFields.repsInput.value),
-            weight: Number(formFields.weightInput.value),
-            modifier: formFields.modifierInput.value,
-            sets: Number(formFields.setsInput.value),
-            rpe: Number(formFields.rpeInput.value),
-            date: new Date().toLocaleDateString(),
+            exercise: this.uiElements.formFields.exerciseSelect.value,
+            reps: Number(this.uiElements.formFields.repsInput.value),
+            weight: Number(this.uiElements.formFields.weightInput.value),
+            modifier: this.uiElements.formFields.modifierInput.value,
+            sets: Number(this.uiElements.formFields.setsInput.value),
+            rpe: Number(this.uiElements.formFields.rpeInput.value),
+            date: new Date().toISOString().split('T')[0],
         };
     }
 
-    function updateWorkout(workout, workouts) {
-        workouts[editIndex] = workout;
-        editIndex = null;
-        formFields.addWorkoutButton.value = ADD_WORKOUT_LABEL;
+    updateWorkout(workout, workouts) {
+        workouts[this.state.editIndex] = workout;
         localStorage.setItem('workouts', JSON.stringify(workouts));
+        this.uiElements.workoutList.replaceChild(this.createWorkoutListItem(workout, this.state.editIndex), this.uiElements.workoutList.childNodes[this.state.editIndex]);
+        this.state.editIndex = null;
     }
 
-    function addWorkout(workout, workouts) {
+    addWorkout(workout, workouts) {
         workouts.push(workout);
         localStorage.setItem('workouts', JSON.stringify(workouts));
+        const listItem = this.createWorkoutListItem(workout, workouts.length - 1);
+        this.uiElements.workoutList.appendChild(listItem);
     }
 
-    function resetFormFields() {
-        formFields.repsInput.value = '';
-        formFields.weightInput.value = '';
-        formFields.modifierInput.value = '';
-        formFields.setsInput.value = '';
-        formFields.rpeInput.value = '';
+    updatePersonalRecordsAll() {
+        const workouts = this.getWorkoutsFromLocalStorage();
+        const personalRecords = {};
+
+        workouts.forEach(workout => {
+            if (!personalRecords[workout.exercise] || personalRecords[workout.exercise].weight < workout.weight) {
+                personalRecords[workout.exercise] = workout;
+            }
+        });
+
+        localStorage.setItem('personalRecords', JSON.stringify(personalRecords));
+        this.displayPersonalRecords();
     }
 
-    function generateChart() {
-        if (chart !== null) {
-            chart.destroy();
+    displayPersonalRecords() {
+        const personalRecords = JSON.parse(localStorage.getItem('personalRecords') || '{}');
+        this.uiElements.personalRecordsDiv.textContent = '';
+
+        for (const exercise in personalRecords) {
+            const record = personalRecords[exercise];
+            const recordDiv = document.createElement('div');
+            recordDiv.textContent = this.getWorkoutText(record);
+            this.uiElements.personalRecordsDiv.appendChild(recordDiv);
+        }
+    }
+
+    generateChart() {
+        if (this.state.chart !== null) {
+            this.state.chart.destroy();
         }
 
-        const selectedExercise = chartExerciseSelect.value;
-        const workouts = getWorkoutsFromLocalStorage().filter(workout => workout.exercise === selectedExercise);
+        const selectedExercise = this.uiElements.chartExerciseSelect.value;
+        const workouts = this.getWorkoutsFromLocalStorage().filter(workout => workout.exercise === selectedExercise);
         const dates = workouts.map(workout => workout.date);
         const weights = workouts.map(workout => workout.weight);
         const reps = workouts.map(workout => workout.reps);
 
-        const ctx = document.getElementById('myChart').getContext('2d');
-        chart = new Chart(ctx, {
+        const ctx = this.uiElements.myChart.getContext('2d');
+        this.state.chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: dates,
